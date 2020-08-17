@@ -1,0 +1,79 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Problem 1:
+All the cleaning and organizing of the data is done here:
+
+```{r}
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(ggplot2)
+
+orders = read.csv('./data/Orders.csv')
+
+money = function(x){
+  x = str_remove_all(x, fixed('$'))
+  x = str_remove_all(x, ',')
+  return(as.numeric(x))
+}
+
+
+orders = orders %>% mutate(Profit = money(Profit), Sales = money(Sales))
+
+orders = orders %>% mutate(Order.Date = mdy(Order.Date))
+
+orders = orders %>% mutate(Month = month(Order.Date), Year = year(Order.Date), Quarter = quarter(Order.Date))
+
+head(orders)
+```
+
+
+```{r}
+orders %>% group_by(Quarter) %>% summarize(Total_Orders = sum(Quantity))
+orders %>% group_by(Category,Quarter) %>% summarize(Total_Orders = sum(Quantity)) %>% ggplot(., aes(x = Quarter, y = Total_Orders)) + geom_col(aes(color = Category) )
+```
+Problem 2:
+As shown above there are clearly more Total_Orders in Q4 and less in Q1.And it does follow for all of the categories
+
+Problem 3:
+	1. How much profit did we lose due to returns each year?
+	Taking this to mean any negative profit:
+```{r}
+orders %>% filter(Profit < 0) %>% summarize(lost_profit = sum(Profit))
+```
+	
+
+
+	2. How many customer returned more than once? more than 5 times?
+```{r}
+orders %>% filter(Profit < 0) %>% group_by(Customer.ID) %>% count() %>% filter(n>4) %>% nrow()
+```
+	
+
+
+	3. Which regions are more likely to return orders?
+```{r}
+orders %>% filter(Profit < 0) %>% group_by(Region) %>% count() %>% 
+  arrange(desc(n)) %>% ggplot(., aes(x = reorder(Region,-n), y = n)) + geom_col() + theme(axis.text.x = element_text(face="bold",  angle=90))
+```
+	
+
+
+	4. Which categories (sub-categories) of products are more likely to be returned?
+
+```{r}
+orders %>% filter(Profit < 0) %>% group_by(Category,Sub.Category) %>% count() %>% ggplot(., aes(x = reorder(Sub.Category,-n), y = n)) + geom_col() + theme(axis.text.x = element_text(face="bold",  angle=90))
+```
+
+
+```
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
