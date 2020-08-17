@@ -33,7 +33,7 @@ head(orders)
 
 ```{r}
 orders %>% group_by(Quarter) %>% summarize(Total_Orders = sum(Quantity))
-orders %>% group_by(Category,Quarter) %>% summarize(Total_Orders = sum(Quantity)) %>% ggplot(., aes(x = Quarter, y = Total_Orders)) + geom_col(aes(color = Category) )
+orders %>% group_by(Category,Quarter) %>% summarize(Total_Orders = sum(Quantity)) %>% ggplot(., aes(x = Quarter, y = Total_Orders)) + geom_col(aes(color = Category), position = position_dodge())
 ```
 Problem 2:
 As shown above there are clearly more Total_Orders in Q4 and less in Q1.And it does follow for all of the categories
