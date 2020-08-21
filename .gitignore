@@ -1,3 +1,6 @@
 data
 .ipynb_checkpoints
 *.html
+Machine_Learning_Lab_Solutions
+.RData
+.Rhistory

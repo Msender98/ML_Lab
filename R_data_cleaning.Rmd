@@ -32,6 +32,17 @@ head(orders)
 
 
 ```{r}
+
+returns = read.csv('./data/Returns.csv')
+head(returns)
+
+Orders_Returns = left_join(orders,returns,by = 'Order.ID')
+
+Orders_Returns %>% filter(Returned == 'Yes')
+```
+
+
+```{r}
 orders %>% group_by(Quarter) %>% summarize(Total_Orders = sum(Quantity))
 orders %>% group_by(Category,Quarter) %>% summarize(Total_Orders = sum(Quantity)) %>% ggplot(., aes(x = Quarter, y = Total_Orders)) + geom_col(aes(color = Category), position = position_dodge())
 ```
